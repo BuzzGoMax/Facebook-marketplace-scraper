@@ -1,374 +1,326 @@
-[Facebook Marketplace Scraper](https://apify.com/raidr-api/facebook-marketplace-scraper?fpr=data)
+[Facebook Marketplace Scraper](https://apify.com/sovereigntaylor/facebook-marketplace-scraper?fpr=data)
 
-# 🛒 Facebook Marketplace Scraper
+# Facebook Marketplace Scraper
 
-Search and scrape **any item** from [Facebook Marketplace](https://www.facebook.com/marketplace) by keyword. Find electronics, furniture, clothing, collectibles, and more with powerful filtering and instant Discord notifications.
+Extract listings from Facebook Marketplace across all major categories. Scrape vehicles, property, electronics, clothing, furniture, and more with full detail extraction including prices, descriptions, seller information, images, conditions, and locations.
 
-## 🔍 What does Facebook Marketplace Scraper do?
+## Features
 
-Facebook Marketplace Scraper lets you **search for anything** on Facebook Marketplace and extract listing data automatically. Unlike category-specific scrapers, this tool works with any search query — just like typing into Facebook's search bar.
+- **6 categories** -- vehicles, property, electronics, clothing, furniture, or browse all
+- **Multi-term search** -- search for multiple keywords in a single run
+- **Location targeting** -- 30+ pre-mapped US cities plus custom location IDs
+- **Price filtering** -- set min/max price ranges
+- **Radius control** -- search within a specific mile radius of your location
+- **Sort options** -- best match, price low/high, or newest first
+- **3 extraction strategies** for maximum data coverage:
 
-- **Search any keyword**: iPhones, PS5s, vintage furniture, bikes, concert tickets — anything listed on Marketplace
-- **Multiple search terms**: Run several searches in one job with shared or individual filters
-- **Price filtering**: Set min/max prices per search to find deals in your budget
-- **Location-based**: Search any city, address, or postal code worldwide
-- **Real-time alerts**: Get Discord notifications the moment new listings appear
-- **Export anywhere**: JSON, CSV, Excel, HTML — or integrate via API
+- **Strategy 1**: HTML card parsing from browse/search pages
+- **Strategy 2**: Individual listing detail page extraction
+- **Strategy 3**: GraphQL/JSON relay data extraction from embedded page data
+- **Anti-blocking measures** -- user agent rotation, request delays, proxy support
+- **Login wall detection** -- auto-switches to mbasic.facebook.com fallback
+- **CAPTCHA detection** -- detects and reports blocks gracefully
+- **Deduplication** -- never scrapes the same listing twice
+- **Pay-per-event billing** -- only charged for each listing successfully scraped
 
-## 💡 Why scrape Facebook Marketplace?
+## Important Notes
 
-Facebook Marketplace reaches **over 1 billion users monthly**, making it one of the largest peer-to-peer marketplaces in the world. Here's why businesses and individuals scrape it:
+Facebook Marketplace aggressively restricts automated access. For best results:
 
-- **Resellers & flippers**: Find underpriced items to resell for profit
-- **Deal hunters**: Monitor products and get alerts when prices drop
-- **Market research**: Analyze pricing trends and demand for products
-- **Inventory sourcing**: Find stock for your e-commerce business
-- **Competitive analysis**: Track what competitors are selling and at what prices
-- **Lead generation**: Identify sellers for outreach and partnerships
+1. **Residential proxies are strongly recommended** -- Facebook blocks most datacenter IPs
+2. **Many Marketplace features require authentication** -- public access is limited
+3. **Rate limits apply** -- the scraper uses conservative delays (2-5s between requests)
+4. **Results may vary by location** -- some markets have more public listings than others
 
-## 📊 What data can you scrape from Facebook Marketplace?
+## Use Cases
 
-Every listing includes the following data:
+### Used Car Shopping
 
-| Data Point | Always Included | With Detailed Fetch |
-| --- | --- | --- |
-| 📸 **Photo** | ✅ Primary image | ✅ All photos |
-| 📝 **Title** | ✅ | ✅ |
-| 💰 **Price** | ✅ (current + strikethrough) | ✅ |
-| 📍 **Location** | ✅ (city, state) | ✅ (+ coordinates) |
-| 📅 **Listing Date** | ✅ (exact creation time) | ✅ (exact creation time) |
-| 🔗 **URL** | ✅ | ✅ |
-| 🏷️ **Status** | ✅ (sold/pending/live) | ✅ |
-| 🔍 **Search Query** | ✅ | ✅ |
-| 📦 **Description** | — | ✅ Full description |
-| 👤 **Seller** | — | ✅ Name and type |
-| 🚚 **Delivery** | — | ✅ Shipping options |
-| 📊 **Condition** | — | ✅ Item condition |
+Search for vehicles across multiple cities, compare prices, and find deals on specific makes and models.
 
-## 🚀 How to scrape Facebook Marketplace
+### Apartment Hunting
 
-1. **Create a free Apify account** using your email
-2. **Open [Facebook Marketplace Scraper](https://apify.com/your-username/facebook-marketplace-query-scraper)**
-3. **Enter search terms** — What are you looking for? (e.g., "iPhone 14", "PS5", "mountain bike")
-4. **Set your location** — City, address, or postal code
-5. **Configure filters** — Price range, listing age, result limits
-6. **Click Start** and wait for the data
-7. **Download results** in JSON, CSV, Excel, or HTML
+Monitor rental listings in your target area with price and radius filters to catch new postings quickly.
 
-## ⬇️ Input examples
+### Competitive Price Analysis
 
-### Simple mode — Quick searches
+Track pricing for electronics, furniture, or other goods across different markets to understand regional pricing.
 
-Search for multiple items with shared settings:
+### Reseller Sourcing
+
+Find underpriced items in your area for resale by scanning specific categories with price filters.
+
+### Market Research
+
+Analyze listing volumes, price distributions, and category trends across geographic areas.
+
+### Lead Generation
+
+Identify sellers of specific product categories for B2B outreach or partnership opportunities.
+
+## Input
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `searchTerms` | String[] | `[]` | Keywords to search for (each term runs a separate search) |
+| `location` | String | `newyork` | City name or Facebook location ID |
+| `maxPrice` | Integer | `0` | Maximum price in USD (0 = no limit) |
+| `minPrice` | Integer | `0` | Minimum price in USD (0 = no limit) |
+| `category` | String | `all` | Category filter: `vehicles`, `property`, `electronics`, `clothing`, `furniture`, `all` |
+| `radius` | Integer | `40` | Search radius in miles (0 = default) |
+| `maxResults` | Integer | `500` | Maximum listings to scrape |
+| `sortBy` | String | `best_match` | Sort order: `best_match`, `price_low`, `price_high`, `date_newest` |
+| `proxy` | Object | *(none)* | Apify proxy configuration (residential recommended) |
+
+### Supported Locations
+
+| City | Code | City | Code |
+| --- | --- | --- | --- |
+| New York | `newyork` | San Francisco | `sanfrancisco` |
+| Los Angeles | `losangeles` | Chicago | `chicago` |
+| Houston | `houston` | Phoenix | `phoenix` |
+| Philadelphia | `philadelphia` | San Antonio | `sanantonio` |
+| San Diego | `sandiego` | Dallas | `dallas` |
+| Austin | `austin` | Seattle | `seattle` |
+| Denver | `denver` | Boston | `boston` |
+| Nashville | `nashville` | Miami | `miami` |
+| Portland | `portland` | Atlanta | `atlanta` |
+| Minneapolis | `minneapolis` | Detroit | `detroit` |
+| Las Vegas | `lasvegas` | Baltimore | `baltimore` |
+| Milwaukee | `milwaukee` | Sacramento | `sacramento` |
+
+You can also use Facebook's numeric location IDs for precise targeting of any area worldwide.
+
+## Input Examples
+
+### Used iPhones in New York under $500
 
 ```
 {
-  "searchMode": "simple",
-  "searchTerms": ["iPhone 14", "iPhone 14 Pro", "iPhone 14 Pro Max"],
-  "location": "New York, NY",
-  "radiusKm": "40",
-  "minPrice": 400,
-  "maxPrice": 900,
-  "daysListed": "7",
-  "listingsPerSearch": 50
+    "searchTerms": ["iphone 15", "iphone 14 pro"],
+    "location": "newyork",
+    "category": "electronics",
+    "maxPrice": 500,
+    "maxResults": 200,
+    "sortBy": "price_low"
 }
 ```
 
-### Advanced mode — Individual filters per search
-
-Perfect for resellers tracking different products at different price points:
+### Furniture in Chicago within 20 miles
 
 ```
 {
-  "searchMode": "advanced",
-  "location": "Los Angeles, CA",
-  "radiusKm": "65",
-  "searches": [
-    {
-      "searchTerm": "PS5",
-      "minPrice": 300,
-      "maxPrice": 450,
-      "daysListed": "1",
-      "filterKeywords": "disc, with controllers"
-    },
-    {
-      "searchTerm": "Nintendo Switch OLED",
-      "minPrice": 200,
-      "maxPrice": 300,
-      "daysListed": "7",
-      "filterKeywords": "with games, bundle"
-    },
-    {
-      "searchTerm": "MacBook Pro",
-      "minPrice": 800,
-      "maxPrice": 1500,
-      "daysListed": "1",
-      "filterKeywords": "M1, M2, M3, 14 inch, 16 inch"
-    }
-  ]
+    "searchTerms": ["couch", "dining table", "bookshelf"],
+    "location": "chicago",
+    "category": "furniture",
+    "radius": 20,
+    "maxResults": 300
 }
 ```
 
-## ⬆️ Output example
-
-Each listing is returned with structured data:
-
-**Standard output (fetchDetailedItems off):**
+### Cars under $15,000 in Los Angeles
 
 ```
 {
-  "id": "26187731704185625",
-  "listingId": "1224864905909124",
-  "title": "Mountain Bike - Excellent Condition",
-  "price": {
-    "amount": "250.00",
-    "currency": "CAD",
-    "formatted": "CA$250"
-  },
-  "location": {
-    "city": "Edmonton",
-    "state": "AB"
-  },
-  "primaryImage": "https://scontent.facebook.com/v/...",
-  "isSold": false,
-  "url": "https://www.facebook.com/marketplace/item/1224864905909124/",
-  "searchQuery": "mountain bike",
-  "listing_date": 1771042631,
-  "listing_date_ms": 1771042631000,
-  "_fetchedAt": "2026-02-15T03:25:41.399Z"
+    "searchTerms": ["honda civic", "toyota camry"],
+    "location": "losangeles",
+    "category": "vehicles",
+    "maxPrice": 15000,
+    "maxResults": 500,
+    "sortBy": "date_newest"
 }
 ```
 
-**With detailed fetch enabled (fetchDetailedItems on):**
+### Browse all listings in Austin
 
 ```
 {
-  "id": "26187731704185625",
-  "listingId": "1224864905909124",
-  "title": "Mountain Bike - Excellent Condition",
-  "price": {
-    "formatted": "CA$250"
-  },
-  "listing_date": 1771042631,
-  "listing_date_ms": 1771042631000,
-  "extraListingData": {
-    "description": "Selling my mountain bike, barely used. 21-speed Shimano gears, front suspension, disc brakes...",
+    "location": "austin",
+    "category": "all",
+    "maxResults": 1000
+}
+```
+
+### Rental apartments in Miami, $1000-$2500
+
+```
+{
+    "searchTerms": ["apartment", "1 bedroom"],
+    "location": "miami",
+    "category": "property",
+    "minPrice": 1000,
+    "maxPrice": 2500,
+    "radius": 15,
+    "maxResults": 200
+}
+```
+
+## Output
+
+Each listing is saved to the default dataset with the following fields:
+
+```
+{
+    "title": "iPhone 15 Pro Max 256GB - Excellent Condition",
+    "price": 899,
+    "location": "Brooklyn, NY",
+    "description": "Selling my iPhone 15 Pro Max 256GB in Natural Titanium. Phone is in excellent condition, always kept in a case with screen protector. Battery health at 97%. Comes with original box, charger, and unused EarPods. No scratches or dents.",
+    "sellerName": "John D.",
+    "sellerRating": 4.8,
+    "images": [
+        "https://scontent.xx.fbcdn.net/v/t45.1600-4/image1.jpg",
+        "https://scontent.xx.fbcdn.net/v/t45.1600-4/image2.jpg",
+        "https://scontent.xx.fbcdn.net/v/t45.1600-4/image3.jpg"
+    ],
     "condition": "Used - Like New",
-    "creation_time": 1771042582000,
-    "seller": {
-      "name": "Sarah M.",
-      "type": "INDIVIDUAL"
-    },
-    "delivery_types": ["IN_PERSON"],
-    "location": {
-      "city": "Edmonton",
-      "state": "AB",
-      "latitude": 53.546,
-      "longitude": -113.491
-    }
-  }
+    "category": "Electronics",
+    "listedAt": "2026-02-28T14:30:00.000Z",
+    "url": "https://www.facebook.com/marketplace/item/1234567890123/",
+    "listingId": "1234567890123",
+    "attributes": null,
+    "scrapedAt": "2026-03-01T10:00:00.000Z"
 }
 ```
 
-## 💰 How much does it cost to scrape Facebook Marketplace?
+### Vehicle listing example:
 
-The scraper uses Apify's **pay-per-use** pricing. You only pay for compute resources consumed.
+```
+{
+    "title": "2021 Honda Civic EX - Low Miles",
+    "price": 22500,
+    "location": "Queens, NY",
+    "description": "2021 Honda Civic EX with only 18,000 miles. Single owner, clean title, no accidents. Features include sunroof, Apple CarPlay, lane departure warning, and adaptive cruise control.",
+    "sellerName": "AutoMax Dealers",
+    "sellerRating": 4.5,
+    "images": [
+        "https://scontent.xx.fbcdn.net/v/t45.1600-4/car1.jpg",
+        "https://scontent.xx.fbcdn.net/v/t45.1600-4/car2.jpg"
+    ],
+    "condition": "Used - Like New",
+    "category": "Vehicles",
+    "listedAt": "2026-02-27T09:15:00.000Z",
+    "url": "https://www.facebook.com/marketplace/item/9876543210123/",
+    "listingId": "9876543210123",
+    "attributes": {
+        "year": "2021",
+        "make": "Honda",
+        "model": "Civic EX",
+        "mileage": "18,000",
+        "transmission": "Automatic",
+        "fuelType": "Gasoline",
+        "exteriorColor": "Silver"
+    },
+    "scrapedAt": "2026-03-01T10:05:00.000Z"
+}
+```
 
-| Results | Standard | With Detailed Fetch |
-| --- | --- | --- |
-| 100 | ~$0.05 | ~$0.20 |
-| 500 | ~$0.20 | ~$0.80 |
-| 1,000 | ~$0.40 | ~$1.50 |
+### Minimal listing (card-only data, no detail page):
 
-*Costs depend on number of searches, filters, and whether detailed fetching is enabled.*
+```
+{
+    "title": "Vintage Wooden Bookshelf",
+    "price": 75,
+    "location": "Manhattan, NY",
+    "description": null,
+    "sellerName": null,
+    "sellerRating": null,
+    "images": ["https://scontent.xx.fbcdn.net/v/t45.1600-4/shelf.jpg"],
+    "condition": null,
+    "category": "Furniture / Home",
+    "listedAt": null,
+    "url": "https://www.facebook.com/marketplace/item/5555555555555/",
+    "listingId": "5555555555555",
+    "attributes": null,
+    "scrapedAt": "2026-03-01T10:10:00.000Z"
+}
+```
 
-**Free tier**: New users get $5 in monthly credits — enough for thousands of listings!
+## How It Works
 
-## 🔍 Fetch Detailed Item Info
+The scraper uses three complementary strategies to maximize data extraction:
 
-Toggle **Fetch Detailed Item Info** to control the depth of data per listing:
+### Strategy 1: HTML Card Parsing
 
-|  | Standard (off) | Detailed Fetch (on) |
-| --- | --- | --- |
-| **Speed** | Fast | Slower (1 extra request per listing) |
-| **Cost** | Low | Higher (additional proxy usage) |
-| **Listing date** | ✅ Approximate (~1 min accuracy) | ✅ Exact creation time |
-| **Description** | — | ✅ Full seller description |
-| **Condition** | — | ✅ Item condition |
-| **Seller info** | — | ✅ Name, type |
-| **All photos** | — | ✅ Every listing photo |
-| **Coordinates** | — | ✅ Latitude/longitude |
-| **Delivery options** | — | ✅ Shipping, in-person |
+Parses the server-rendered HTML of Marketplace browse and search pages. Extracts listing cards containing title, price, location, thumbnail image, and listing URL. Works on both [www.facebook.com](http://www.facebook.com) and mbasic.facebook.com.
 
-**Recommendation**: Start with detailed fetch **off** for speed and cost savings. Enable it when you need description, seller info, or condition data.
+### Strategy 2: Detail Page Extraction
 
-## 📅 How listing dates work
+Visits individual listing pages to extract the full data: complete description, all images (high resolution), seller name and rating, item condition, location details, and category-specific attributes (vehicle specs, property details).
 
-Every listing automatically gets an approximate posting date — no extra cost, no extra requests. This means:
+### Strategy 3: GraphQL Relay Data
 
-- **Age filtering always works** — filter by "Last 1 hour", "Last 24 hours", etc. without enabling detailed fetch
-- **Discord timestamps always show** — "Listed 2 hours ago in Edmonton, AB"
-- **Accuracy**: ~1 minute of the actual posting time
+Facebook embeds pre-loaded data in script tags as serialized JSON (GraphQL relay format). This often contains structured listing data including fields not visible in the HTML. The scraper extracts and parses these payloads for additional data.
 
-When **Fetch Detailed Item Info** is enabled, the scraper also gets the exact `creation_time` from Facebook and uses it for a second, more precise age filter pass.
+### mbasic Fallback
 
-## 💬 Discord notifications
+When the main Facebook site shows a login wall, the scraper falls back to mbasic.facebook.com, which has a simpler HTML structure that is often more accessible without authentication.
 
-Get instant alerts when new listings match your criteria:
+## Anti-Blocking Measures
 
-1. **Create a Discord webhook**: Server Settings > Integrations > Webhooks > New Webhook
-2. **Copy the webhook URL**
-3. **Paste into the scraper's "Webhook URL" field**
-4. **Configure options**: New items only, items per message, image display
+Facebook is one of the most aggressive websites at detecting and blocking scrapers. This actor includes:
 
-**What you'll receive:**
+- **User agent rotation** -- 16 realistic desktop and mobile user agents
+- **Referrer spoofing** -- realistic referrer headers
+- **Request delays** -- 2-5 second random delays between requests
+- **Rate limiting** -- max 15 requests per minute
+- **Block detection** -- identifies login walls, CAPTCHAs, rate limits, and error pages
+- **Strategy switching** -- automatically tries mbasic.facebook.com on login walls
+- **Proxy support** -- full integration with Apify's proxy infrastructure
 
-- Listing photo (thumbnail or full size)
-- Title and price
-- **Live-updating relative time** — "Listed 2 hours ago in Brooklyn" (auto-updates in Discord)
-- Direct link to the listing
-- Available/Sold status indicator
+Despite these measures, **residential proxies are strongly recommended** for any serious Facebook scraping. Datacenter IPs are almost always blocked.
 
-## ⚡ Simple vs Advanced search modes
+## Performance Tips
 
-| Feature | Simple Mode | Advanced Mode |
-| --- | --- | --- |
-| Multiple search terms | Yes | Yes |
-| Price filters | Shared across all searches | Individual per search |
-| Days listed filter | Shared | Individual per search |
-| Keyword filters | Shared | Individual per search |
-| Results limit | Shared | Individual per search |
-| Best for | Quick, similar searches | Resellers, complex monitoring |
+1. **Always use residential proxies** -- this is the single most important factor for success
+2. **Start small** -- test with `maxResults: 10` before scaling up
+3. **Use specific search terms** -- more targeted searches yield better results than broad browsing
+4. **Set price filters** -- reduces the number of pages to scrape
+5. **Try different locations** -- some areas have more publicly accessible listings
+6. **Use the `date_newest` sort** -- freshest listings are often more accessible
 
-**Use Simple mode** when searching for variations of the same product (iPhone 14, iPhone 14 Pro, iPhone 14 Pro Max).
+## Limitations
 
-**Use Advanced mode** when tracking different products with different price expectations (PS5 at $300-450, MacBook at $800-1500).
+- Facebook Marketplace increasingly requires login for full access
+- Some listing details may not be available without authentication
+- Image URLs may expire after a period of time
+- Very high-volume scraping will trigger rate limits regardless of proxy quality
+- Vehicle VIN data is only available on detail pages and not all listings include it
+- Seller rating data depends on the seller having enough reviews
 
-## 🔄 Deduplication — Track only new listings
+## Pricing (Pay Per Event)
 
-The scraper remembers what it's seen before using stable Facebook listing IDs:
+This actor uses Apify's pay-per-event model. You are charged $0.005 for each listing successfully scraped and saved to the dataset. You are NOT charged for failed requests, blocked pages, or duplicate listings.
 
-- **First run**: Collects all matching listings
-- **Subsequent runs**: Only returns NEW listings not seen before
-- **Discord notifications**: Only alerts you about fresh listings
+## Legal Notice
 
-This is perfect for:
+This actor is provided as a technical tool for research and analysis purposes. Users are responsible for ensuring their use complies with Facebook's Terms of Service and all applicable laws and regulations. The actor accesses only publicly available pages and does not circumvent any authentication mechanisms.
 
-- Daily monitoring of products
-- Building alerts for price drops
-- Avoiding duplicate entries in your database
-
-To reset and see all listings again, disable "Skip Previously Seen" in the input.
-
-## ✨ Tips for better results
-
-1. **Be specific with search terms** — "iPhone 14 Pro 256GB" finds better matches than just "iPhone"
-2. **Use filter keywords** — Narrow results to specific conditions or features
-3. **Start with a smaller radius** — Expand if you need more results
-4. **Use age filtering** — "Maximum Listing Age" catches bumped/boosted old listings that appear new
-5. **Enable detailed fetch selectively** — Only when you need description, condition, or seller data
-6. **Schedule regular runs** — Catch new listings as they appear
-
-## 🔗 Integrations
-
-Connect scraped data to your favorite tools:
-
-- **Google Sheets** — Auto-export to spreadsheets
-- **Zapier** — Trigger any workflow
-- **Make (Integromat)** — Complex automation
-- **Slack** — Team notifications
-- **Airtable** — Organize and filter data
-- **Webhooks** — Custom integrations
-- **REST API** — Programmatic access
-
-## 🛠️ Using the API
-
-**Python example:**
+## Integration — Python
 
 ```
 from apify_client import ApifyClient
 
 client = ApifyClient("YOUR_API_TOKEN")
-
-run = client.actor("your-username/facebook-marketplace-query-scraper").call(
-    run_input={
-        "searchMode": "simple",
-        "searchTerms": ["PS5", "PlayStation 5"],
-        "location": "Chicago, IL",
-        "maxPrice": 400,
-        "listingsPerSearch": 50
-    }
-)
+run = client.actor("sovereigntaylor/facebook-marketplace-scraper").call(run_input={
+    "searchTerm": "facebook marketplace",
+    "maxResults": 50
+})
 
 for item in client.dataset(run["defaultDatasetId"]).iterate_items():
-    print(f"{item['title']} - {item['price']['formatted']}")
+    print(f"{item.get('title', item.get('name', 'N/A'))}")
 ```
 
-**Node.js example:**
+## Integration — JavaScript
 
 ```
 import { ApifyClient } from 'apify-client';
-
 const client = new ApifyClient({ token: 'YOUR_API_TOKEN' });
 
-const run = await client.actor('your-username/facebook-marketplace-query-scraper').call({
-    searchMode: 'simple',
-    searchTerms: ['PS5', 'PlayStation 5'],
-    location: 'Chicago, IL',
-    maxPrice: 400,
-    listingsPerSearch: 50
+const run = await client.actor('sovereigntaylor/facebook-marketplace-scraper').call({
+    searchTerm: 'facebook marketplace',
+    maxResults: 50
 });
 
 const { items } = await client.dataset(run.defaultDatasetId).listItems();
-console.log(`Found ${items.length} listings`);
+items.forEach(item => console.log(item.title || item.name || 'N/A'));
 ```
-
-## ❓ FAQ
-
-### What can I search for?
-
-Anything listed on Facebook Marketplace! Electronics, furniture, clothing, vehicles, real estate, collectibles, sporting goods, musical instruments — if it's on Marketplace, you can scrape it.
-
-### Why do I need residential proxies?
-
-Facebook blocks datacenter IPs to prevent automated access. The scraper uses Apify's residential proxy network automatically — no extra configuration needed.
-
-### Can I search multiple locations?
-
-Each scraper run searches one location. For multiple locations, run the scraper multiple times with different locations, use Apify's Scheduler, or orchestrate via the API.
-
-### Do I need "Fetch Detailed Item Info" for age filtering?
-
-No. Age filtering works out of the box using approximate listing dates. Enabling detailed fetch adds a second, more precise filter pass using the exact creation time, but is not required.
-
-### What's the difference between "Days Listed" and "Maximum Listing Age"?
-
-- **Days Listed**: Facebook's built-in filter — affected by sellers bumping or boosting posts
-- **Maximum Listing Age**: Uses the actual posting date — more accurate, works with or without detailed fetch
-
-### How accurate is the listing date without detailed fetch?
-
-The approximate listing date is accurate to within ~1 minute of the actual posting time. This is precise enough for age filtering and Discord timestamps.
-
-### Is it legal to scrape Facebook Marketplace?
-
-Scraping publicly available data is generally legal. This scraper only extracts publicly visible listings — no private data, no login required, no personal information collected. Use responsibly and comply with applicable laws.
-
-### Why are some listings missing images?
-
-Facebook sometimes restricts image access. The scraper uses the primary image from search results as a fallback when detailed images aren't available.
-
-## 🔗 Related scrapers
-
-- **[Facebook Marketplace Vehicle Scraper](https://apify.com/your-username/facebook-marketplace-vehicle-scraper)** — Specialized for cars, trucks, motorcycles with make/model/year/mileage filters
-
-## 📞 Support
-
-- **Issues?** Check the [Issues tab](https://apify.com/your-username/facebook-marketplace-query-scraper/issues)
-- **Bugs?** Report with steps to reproduce
-- **Features?** We welcome suggestions!
-- **Custom needs?** Contact us for custom scraping solutions
-
----
-
-*Facebook Marketplace Scraper is not affiliated with or endorsed by Facebook/Meta. Use responsibly and in accordance with Facebook's Terms of Service.*
