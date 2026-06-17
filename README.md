@@ -1,230 +1,374 @@
-[Facebook Marketplace Scraper](https://apify.com/crowdpull/facebook-marketplace-scraper?fpr=data)
+[Facebook Marketplace Scraper](https://apify.com/raidr-api/facebook-marketplace-scraper?fpr=data)
 
-# CrowdPull FB Marketplace Scraper
+# 🛒 Facebook Marketplace Scraper
 
-Extract listings from **Facebook Marketplace** worldwide — no login or cookies required.
+Search and scrape **any item** from [Facebook Marketplace](https://www.facebook.com/marketplace) by keyword. Find electronics, furniture, clothing, collectibles, and more with powerful filtering and instant Discord notifications.
 
-No browser automation — just fast, lightweight HTTP requests using Facebook's internal GraphQL API. Works with any location Facebook Marketplace supports.
+## 🔍 What does Facebook Marketplace Scraper do?
 
-## Features
+Facebook Marketplace Scraper lets you **search for anything** on Facebook Marketplace and extract listing data automatically. Unlike category-specific scrapers, this tool works with any search query — just like typing into Facebook's search bar.
 
-- **No login required** — extracts listings anonymously from public marketplace
-- **Works worldwide** — any city Facebook Marketplace supports (US, Europe, Asia, Latin America, etc.)
-- **Two input modes** — paste marketplace URLs directly, or just enter a city/neighborhood/ZIP code
-- **Keyword search** — filter by product name, category, or description
-- **Category URLs** — paste category-specific URLs (e.g., `/marketplace/chicago/home-improvements`)
-- **Price filtering** — set minimum and maximum price thresholds
-- **Multi-URL support** — scrape multiple locations or categories in a single run
-- **Smart Scrape (dedup)** — skip listings already scraped in previous runs
-- **Date filtering** — set `untilDate` to only extract listings from a specific date onward
-- **Strict filtering** — exclude broad matches and listings from outside the target location
-- **Position tracking** — each listing includes its original position in the search results
-- **Full listing data** — title, price, location, image, condition, delivery options
-- **Rich detail mode** — enable `includeDetails` for full description, all photos, vehicle specs (make, model, odometer, colors), and listing status
-- **Pagination** — automatically loads all results via Relay cursors
-- **No browser** — lightweight HTTP requests only, minimal compute cost
+- **Search any keyword**: iPhones, PS5s, vintage furniture, bikes, concert tickets — anything listed on Marketplace
+- **Multiple search terms**: Run several searches in one job with shared or individual filters
+- **Price filtering**: Set min/max prices per search to find deals in your budget
+- **Location-based**: Search any city, address, or postal code worldwide
+- **Real-time alerts**: Get Discord notifications the moment new listings appear
+- **Export anywhere**: JSON, CSV, Excel, HTML — or integrate via API
 
-## Smart Scrape: How It Saves You Money
+## 💡 Why scrape Facebook Marketplace?
 
-Enable **Smart Scrape** to skip listings you've already extracted. The scraper maintains a persistent cache per location that survives across runs indefinitely.
+Facebook Marketplace reaches **over 1 billion users monthly**, making it one of the largest peer-to-peer marketplaces in the world. Here's why businesses and individuals scrape it:
 
-|  | Without Smart Scrape | With Smart Scrape |
+- **Resellers & flippers**: Find underpriced items to resell for profit
+- **Deal hunters**: Monitor products and get alerts when prices drop
+- **Market research**: Analyze pricing trends and demand for products
+- **Inventory sourcing**: Find stock for your e-commerce business
+- **Competitive analysis**: Track what competitors are selling and at what prices
+- **Lead generation**: Identify sellers for outreach and partnerships
+
+## 📊 What data can you scrape from Facebook Marketplace?
+
+Every listing includes the following data:
+
+| Data Point | Always Included | With Detailed Fetch |
 | --- | --- | --- |
-| **Run 1** (100 listings) | 100 extracted | 100 extracted |
-| **Run 2** (20 new) | 100 extracted | 20 new + 80 cache checks |
-| **Run 3** (20 new) | 100 extracted | 20 new + 80 cache checks |
-| **Monthly (daily runs)** | 3,000 extracted | ~700 extracted + ~2,300 cache checks |
-| **Savings** | — | **~60% cheaper** |
+| 📸 **Photo** | ✅ Primary image | ✅ All photos |
+| 📝 **Title** | ✅ | ✅ |
+| 💰 **Price** | ✅ (current + strikethrough) | ✅ |
+| 📍 **Location** | ✅ (city, state) | ✅ (+ coordinates) |
+| 📅 **Listing Date** | ✅ (exact creation time) | ✅ (exact creation time) |
+| 🔗 **URL** | ✅ | ✅ |
+| 🏷️ **Status** | ✅ (sold/pending/live) | ✅ |
+| 🔍 **Search Query** | ✅ | ✅ |
+| 📦 **Description** | — | ✅ Full description |
+| 👤 **Seller** | — | ✅ Name and type |
+| 🚚 **Delivery** | — | ✅ Shipping options |
+| 📊 **Condition** | — | ✅ Item condition |
 
-### Refresh Window
+## 🚀 How to scrape Facebook Marketplace
 
-Set `refreshWindowDays` to re-check recent listings for price changes. For example, `refreshWindowDays: 7` re-scrapes listings from the last 7 days even if cached, so you always get fresh pricing data.
+1. **Create a free Apify account** using your email
+2. **Open [Facebook Marketplace Scraper](https://apify.com/your-username/facebook-marketplace-query-scraper)**
+3. **Enter search terms** — What are you looking for? (e.g., "iPhone 14", "PS5", "mountain bike")
+4. **Set your location** — City, address, or postal code
+5. **Configure filters** — Price range, listing age, result limits
+6. **Click Start** and wait for the data
+7. **Download results** in JSON, CSV, Excel, or HTML
 
-## What you get per listing
+## ⬇️ Input examples
 
-| Field | Description |
-| --- | --- |
-| `listingId` | Unique Facebook listing ID |
-| `title` | Listing title |
-| `price` | Price in cents (e.g., 250000 = $2,500.00) |
-| `priceFormatted` | Human-readable price (e.g., "$2,500") |
-| `currency` | Currency code (USD, EUR, GBP, etc.) |
-| `location` | City and state where the item is listed |
-| `listingUrl` | Direct link to the listing |
-| `imageUrl` | Primary listing image URL |
-| `createdAt` | ISO 8601 timestamp of listing creation |
-| `sellerName` | Seller's display name (when available) |
-| `sellerId` | Seller's Facebook ID (when available) |
-| `sellerType` | Account type (User, Page, etc.) |
-| `condition` | Item condition (new, used, etc.) |
-| `availability` | Listing status |
-| `deliveryTypes` | Available delivery/shipping methods |
-| `position` | Original position in search results feed |
-| `sourceUrl` | The marketplace URL that was scraped |
-| `scrapedAt` | ISO 8601 timestamp of extraction |
+### Simple mode — Quick searches
 
-### Detail fields (when `includeDetails` is enabled)
-
-| Field | Description |
-| --- | --- |
-| `description` | Full listing description text |
-| `allPhotos` | Array of all photo URLs (not just the primary) |
-| `isSold` | Whether the listing has been sold |
-| `isPending` | Whether the listing is pending sale |
-| `inventoryCount` | Quantity available (for multi-item listings) |
-| `vehicleMake` | Vehicle make (e.g., "Chevrolet") |
-| `vehicleModel` | Vehicle model (e.g., "Monte Carlo") |
-| `vehicleYear` | Vehicle model year |
-| `vehicleOdometerMiles` | Odometer reading in miles |
-| `vehicleExteriorColor` | Exterior color |
-| `vehicleInteriorColor` | Interior color |
-| `vehicleFuelType` | Fuel type |
-| `vehicleCondition` | Vehicle condition |
-| `vehicleNumberOfOwners` | Number of previous owners |
-| `vehicleSellerType` | Dealer or private seller |
-| `vehicleEngineSize` | Engine displacement |
-| `vehicleGasMileage` | Fuel economy (combined or city) |
-
-## How it works
-
-1. Parses your input — marketplace URLs are used directly; location names are resolved to Facebook Place IDs via the internal typeahead API for accurate geo-targeting
-2. Fetches the marketplace page anonymously via TLS-fingerprinted HTTP
-3. Extracts authentication tokens (`lsd`, `datr`) and location coordinates from the page SSR data
-4. Parses search-filtered listings from page HTML (SSR) for page 1, then queries GraphQL for pagination
-5. Paginates via Relay cursors until `maxListings` reached or feed exhausted
-6. Optionally enriches each listing with detail page data (description, photos, vehicle specs)
-7. Deduplicates against cache if Smart Scrape is enabled
-
-## Input examples
-
-### Paste marketplace URLs (power users)
+Search for multiple items with shared settings:
 
 ```
 {
-  "marketplaceUrls": [
-    "https://www.facebook.com/marketplace/chicago",
-    "https://www.facebook.com/marketplace/chicago/search/?query=furniture"
-  ],
-  "maxListings": 100
+  "searchMode": "simple",
+  "searchTerms": ["iPhone 14", "iPhone 14 Pro", "iPhone 14 Pro Max"],
+  "location": "New York, NY",
+  "radiusKm": "40",
+  "minPrice": 400,
+  "maxPrice": 900,
+  "daysListed": "7",
+  "listingsPerSearch": 50
 }
 ```
 
-### Enter location + search (quick start)
+### Advanced mode — Individual filters per search
+
+Perfect for resellers tracking different products at different price points:
 
 ```
 {
-  "location": "São Paulo",
-  "searchQuery": "furniture",
-  "maxListings": 50
+  "searchMode": "advanced",
+  "location": "Los Angeles, CA",
+  "radiusKm": "65",
+  "searches": [
+    {
+      "searchTerm": "PS5",
+      "minPrice": 300,
+      "maxPrice": 450,
+      "daysListed": "1",
+      "filterKeywords": "disc, with controllers"
+    },
+    {
+      "searchTerm": "Nintendo Switch OLED",
+      "minPrice": 200,
+      "maxPrice": 300,
+      "daysListed": "7",
+      "filterKeywords": "with games, bundle"
+    },
+    {
+      "searchTerm": "MacBook Pro",
+      "minPrice": 800,
+      "maxPrice": 1500,
+      "daysListed": "1",
+      "filterKeywords": "M1, M2, M3, 14 inch, 16 inch"
+    }
+  ]
 }
 ```
 
-### With listing details (rich data)
+## ⬆️ Output example
+
+Each listing is returned with structured data:
+
+**Standard output (fetchDetailedItems off):**
 
 ```
 {
-  "marketplaceUrls": [
-    "https://www.facebook.com/marketplace/chicago/vehicles"
-  ],
-  "maxListings": 25,
-  "includeDetails": true
-}
-```
-
-### Smart Scrape (incremental monitoring)
-
-```
-{
-  "marketplaceUrls": [
-    "https://www.facebook.com/marketplace/chicago"
-  ],
-  "maxListings": 100,
-  "enableDedup": true,
-  "refreshWindowDays": 7
-}
-```
-
-## Output example
-
-```
-{
-  "listingId": "1731225464511434",
-  "title": "2001 Chevrolet Monte Carlo · SS Coupe 2D",
-  "price": 250000,
-  "priceFormatted": "$2,500",
-  "currency": "USD",
-  "location": "Buffalo Grove, Illinois",
-  "listingUrl": "https://www.facebook.com/marketplace/item/1731225464511434/",
-  "imageUrl": "https://scontent-det1-1.xx.fbcdn.net/v/...",
-  "createdAt": "2026-02-25T18:00:00.000Z",
-  "sellerName": "",
-  "sellerId": "",
-  "sellerType": "",
-  "condition": null,
-  "availability": null,
-  "deliveryTypes": ["LOCAL_PICK_UP"],
-  "description": "2001 Monte Carlo SS, runs great, clean title. 157K miles.",
-  "allPhotos": ["https://scontent-det1-1.xx.fbcdn.net/v/photo1...", "https://scontent-det1-1.xx.fbcdn.net/v/photo2..."],
+  "id": "26187731704185625",
+  "listingId": "1224864905909124",
+  "title": "Mountain Bike - Excellent Condition",
+  "price": {
+    "amount": "250.00",
+    "currency": "CAD",
+    "formatted": "CA$250"
+  },
+  "location": {
+    "city": "Edmonton",
+    "state": "AB"
+  },
+  "primaryImage": "https://scontent.facebook.com/v/...",
   "isSold": false,
-  "vehicleMake": "Chevrolet",
-  "vehicleModel": "Monte Carlo",
-  "vehicleYear": 2001,
-  "vehicleOdometerMiles": 157857,
-  "vehicleExteriorColor": "red",
-  "vehicleCondition": "USED",
-  "sourceUrl": "https://www.facebook.com/marketplace/chicago",
-  "scrapedAt": "2026-03-05T12:00:00.000Z"
+  "url": "https://www.facebook.com/marketplace/item/1224864905909124/",
+  "searchQuery": "mountain bike",
+  "listing_date": 1771042631,
+  "listing_date_ms": 1771042631000,
+  "_fetchedAt": "2026-02-15T03:25:41.399Z"
 }
 ```
 
-Detail fields (`description`, `allPhotos`, vehicle specs, etc.) are only populated when `includeDetails` is enabled.
+**With detailed fetch enabled (fetchDetailedItems on):**
 
-## Other CrowdPull Facebook scrapers
+```
+{
+  "id": "26187731704185625",
+  "listingId": "1224864905909124",
+  "title": "Mountain Bike - Excellent Condition",
+  "price": {
+    "formatted": "CA$250"
+  },
+  "listing_date": 1771042631,
+  "listing_date_ms": 1771042631000,
+  "extraListingData": {
+    "description": "Selling my mountain bike, barely used. 21-speed Shimano gears, front suspension, disc brakes...",
+    "condition": "Used - Like New",
+    "creation_time": 1771042582000,
+    "seller": {
+      "name": "Sarah M.",
+      "type": "INDIVIDUAL"
+    },
+    "delivery_types": ["IN_PERSON"],
+    "location": {
+      "city": "Edmonton",
+      "state": "AB",
+      "latitude": 53.546,
+      "longitude": -113.491
+    }
+  }
+}
+```
 
-- **[Facebook Group Posts Scraper](https://apify.com/crowdpull/facebook-group-posts-scraper)** — extract posts from any public Facebook group
-- **[Facebook Post Comment Scraper](https://apify.com/crowdpull/facebook-post-comment-scraper)** — extract all comments and replies from any public post with reaction breakdowns and spam signals
+## 💰 How much does it cost to scrape Facebook Marketplace?
 
-## Cost estimate
+The scraper uses Apify's **pay-per-use** pricing. You only pay for compute resources consumed.
 
-This Actor uses **no browser** — just lightweight HTTP requests.
-
-| PPE Event | Description | Cost |
+| Results | Standard | With Detailed Fetch |
 | --- | --- | --- |
-| `actor-start` | One-time per run | $0.005 |
-| `listing-extracted` | Per listing pushed to dataset | Per-1K pricing (see Store) |
-| `listing-details` | Per listing enriched with detail page data | Per-1K pricing (see Store) |
-| `cache-check` | Per listing skipped by Smart Scrape | Reduced rate (see Store) |
+| 100 | ~$0.05 | ~$0.20 |
+| 500 | ~$0.20 | ~$0.80 |
+| 1,000 | ~$0.40 | ~$1.50 |
 
-A typical run extracting 100 listings costs ~$0.01-0.03 in platform fees. With `includeDetails` enabled, add ~$0.03/100 listings for detail enrichment.
+*Costs depend on number of searches, filters, and whether detailed fetching is enabled.*
 
-## Use cases
+**Free tier**: New users get $5 in monthly credits — enough for thousands of listings!
 
-- **Market research** — analyze local pricing trends for specific product categories
-- **International price comparison** — compare marketplace prices across cities and countries
-- **Competitive intelligence** — monitor competitor inventory and pricing
-- **Arbitrage** — find underpriced items across locations for resale
-- **Lead generation** — extract seller data from niche product categories
-- **Price monitoring** — track price changes over time with Smart Scrape
-- **Real estate** — monitor furniture/appliance listings near rental properties
+## 🔍 Fetch Detailed Item Info
 
-## Is it legal to scrape Facebook Marketplace?
+Toggle **Fetch Detailed Item Info** to control the depth of data per listing:
 
-This Actor extracts **publicly visible** data from Facebook Marketplace. Here are the key legal considerations:
+|  | Standard (off) | Detailed Fetch (on) |
+| --- | --- | --- |
+| **Speed** | Fast | Slower (1 extra request per listing) |
+| **Cost** | Low | Higher (additional proxy usage) |
+| **Listing date** | ✅ Approximate (~1 min accuracy) | ✅ Exact creation time |
+| **Description** | — | ✅ Full seller description |
+| **Condition** | — | ✅ Item condition |
+| **Seller info** | — | ✅ Name, type |
+| **All photos** | — | ✅ Every listing photo |
+| **Coordinates** | — | ✅ Latitude/longitude |
+| **Delivery options** | — | ✅ Shipping, in-person |
 
-- **Public data**: Only publicly listed items are accessible. No private or restricted content is extracted.
-- **No authentication by default**: The scraper works anonymously without any Facebook account, accessing only what any visitor can see.
-- **Terms of Service**: Web scraping of public data has been upheld in multiple court rulings (hiQ Labs v. LinkedIn, 2022). However, Facebook's Terms of Service restrict automated data collection. Use this tool responsibly and in compliance with applicable laws.
-- **GDPR/CCPA**: Extracted data may contain seller names and profile IDs. If you process this data in the EU/EEA or for California residents, ensure you have a lawful basis under GDPR/CCPA.
-- **Rate limiting**: The scraper includes built-in delays and respects Facebook's rate limits to minimize server impact.
+**Recommendation**: Start with detailed fetch **off** for speed and cost savings. Enable it when you need description, seller info, or condition data.
 
-**You are responsible for ensuring your use of this data complies with all applicable laws and regulations in your jurisdiction.**
+## 📅 How listing dates work
 
-## Limitations
+Every listing automatically gets an approximate posting date — no extra cost, no extra requests. This means:
 
-- `doc_id` may rotate when Facebook redeploys — report issues if extraction stops
-- Facebook rate limits apply; residential proxies recommended
-- Anonymous mode may return fewer results than authenticated browsing
-- Price filtering depends on Facebook's GraphQL variable support (may vary by region)
-- `includeDetails` adds ~1 second per listing (detail page fetch + rate limiting)
-- Seller data (name, ID) is not available in anonymous mode on detail pages
-- Location resolution uses Facebook's internal typeahead API — works for any city, neighborhood, or ZIP code worldwide
+- **Age filtering always works** — filter by "Last 1 hour", "Last 24 hours", etc. without enabling detailed fetch
+- **Discord timestamps always show** — "Listed 2 hours ago in Edmonton, AB"
+- **Accuracy**: ~1 minute of the actual posting time
+
+When **Fetch Detailed Item Info** is enabled, the scraper also gets the exact `creation_time` from Facebook and uses it for a second, more precise age filter pass.
+
+## 💬 Discord notifications
+
+Get instant alerts when new listings match your criteria:
+
+1. **Create a Discord webhook**: Server Settings > Integrations > Webhooks > New Webhook
+2. **Copy the webhook URL**
+3. **Paste into the scraper's "Webhook URL" field**
+4. **Configure options**: New items only, items per message, image display
+
+**What you'll receive:**
+
+- Listing photo (thumbnail or full size)
+- Title and price
+- **Live-updating relative time** — "Listed 2 hours ago in Brooklyn" (auto-updates in Discord)
+- Direct link to the listing
+- Available/Sold status indicator
+
+## ⚡ Simple vs Advanced search modes
+
+| Feature | Simple Mode | Advanced Mode |
+| --- | --- | --- |
+| Multiple search terms | Yes | Yes |
+| Price filters | Shared across all searches | Individual per search |
+| Days listed filter | Shared | Individual per search |
+| Keyword filters | Shared | Individual per search |
+| Results limit | Shared | Individual per search |
+| Best for | Quick, similar searches | Resellers, complex monitoring |
+
+**Use Simple mode** when searching for variations of the same product (iPhone 14, iPhone 14 Pro, iPhone 14 Pro Max).
+
+**Use Advanced mode** when tracking different products with different price expectations (PS5 at $300-450, MacBook at $800-1500).
+
+## 🔄 Deduplication — Track only new listings
+
+The scraper remembers what it's seen before using stable Facebook listing IDs:
+
+- **First run**: Collects all matching listings
+- **Subsequent runs**: Only returns NEW listings not seen before
+- **Discord notifications**: Only alerts you about fresh listings
+
+This is perfect for:
+
+- Daily monitoring of products
+- Building alerts for price drops
+- Avoiding duplicate entries in your database
+
+To reset and see all listings again, disable "Skip Previously Seen" in the input.
+
+## ✨ Tips for better results
+
+1. **Be specific with search terms** — "iPhone 14 Pro 256GB" finds better matches than just "iPhone"
+2. **Use filter keywords** — Narrow results to specific conditions or features
+3. **Start with a smaller radius** — Expand if you need more results
+4. **Use age filtering** — "Maximum Listing Age" catches bumped/boosted old listings that appear new
+5. **Enable detailed fetch selectively** — Only when you need description, condition, or seller data
+6. **Schedule regular runs** — Catch new listings as they appear
+
+## 🔗 Integrations
+
+Connect scraped data to your favorite tools:
+
+- **Google Sheets** — Auto-export to spreadsheets
+- **Zapier** — Trigger any workflow
+- **Make (Integromat)** — Complex automation
+- **Slack** — Team notifications
+- **Airtable** — Organize and filter data
+- **Webhooks** — Custom integrations
+- **REST API** — Programmatic access
+
+## 🛠️ Using the API
+
+**Python example:**
+
+```
+from apify_client import ApifyClient
+
+client = ApifyClient("YOUR_API_TOKEN")
+
+run = client.actor("your-username/facebook-marketplace-query-scraper").call(
+    run_input={
+        "searchMode": "simple",
+        "searchTerms": ["PS5", "PlayStation 5"],
+        "location": "Chicago, IL",
+        "maxPrice": 400,
+        "listingsPerSearch": 50
+    }
+)
+
+for item in client.dataset(run["defaultDatasetId"]).iterate_items():
+    print(f"{item['title']} - {item['price']['formatted']}")
+```
+
+**Node.js example:**
+
+```
+import { ApifyClient } from 'apify-client';
+
+const client = new ApifyClient({ token: 'YOUR_API_TOKEN' });
+
+const run = await client.actor('your-username/facebook-marketplace-query-scraper').call({
+    searchMode: 'simple',
+    searchTerms: ['PS5', 'PlayStation 5'],
+    location: 'Chicago, IL',
+    maxPrice: 400,
+    listingsPerSearch: 50
+});
+
+const { items } = await client.dataset(run.defaultDatasetId).listItems();
+console.log(`Found ${items.length} listings`);
+```
+
+## ❓ FAQ
+
+### What can I search for?
+
+Anything listed on Facebook Marketplace! Electronics, furniture, clothing, vehicles, real estate, collectibles, sporting goods, musical instruments — if it's on Marketplace, you can scrape it.
+
+### Why do I need residential proxies?
+
+Facebook blocks datacenter IPs to prevent automated access. The scraper uses Apify's residential proxy network automatically — no extra configuration needed.
+
+### Can I search multiple locations?
+
+Each scraper run searches one location. For multiple locations, run the scraper multiple times with different locations, use Apify's Scheduler, or orchestrate via the API.
+
+### Do I need "Fetch Detailed Item Info" for age filtering?
+
+No. Age filtering works out of the box using approximate listing dates. Enabling detailed fetch adds a second, more precise filter pass using the exact creation time, but is not required.
+
+### What's the difference between "Days Listed" and "Maximum Listing Age"?
+
+- **Days Listed**: Facebook's built-in filter — affected by sellers bumping or boosting posts
+- **Maximum Listing Age**: Uses the actual posting date — more accurate, works with or without detailed fetch
+
+### How accurate is the listing date without detailed fetch?
+
+The approximate listing date is accurate to within ~1 minute of the actual posting time. This is precise enough for age filtering and Discord timestamps.
+
+### Is it legal to scrape Facebook Marketplace?
+
+Scraping publicly available data is generally legal. This scraper only extracts publicly visible listings — no private data, no login required, no personal information collected. Use responsibly and comply with applicable laws.
+
+### Why are some listings missing images?
+
+Facebook sometimes restricts image access. The scraper uses the primary image from search results as a fallback when detailed images aren't available.
+
+## 🔗 Related scrapers
+
+- **[Facebook Marketplace Vehicle Scraper](https://apify.com/your-username/facebook-marketplace-vehicle-scraper)** — Specialized for cars, trucks, motorcycles with make/model/year/mileage filters
+
+## 📞 Support
+
+- **Issues?** Check the [Issues tab](https://apify.com/your-username/facebook-marketplace-query-scraper/issues)
+- **Bugs?** Report with steps to reproduce
+- **Features?** We welcome suggestions!
+- **Custom needs?** Contact us for custom scraping solutions
+
+---
+
+*Facebook Marketplace Scraper is not affiliated with or endorsed by Facebook/Meta. Use responsibly and in accordance with Facebook's Terms of Service.*
